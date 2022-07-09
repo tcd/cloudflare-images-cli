@@ -8,9 +8,13 @@ The format is based on [Keep a Changelog][keep-a-changelog], and this project ad
 <!-- ## [Unreleased] -->
 
 
-## [1.0.0] - 2022-07-09
+<!-- ## [1.0.0] - 2022-07-09
 ### Added
-- Initial cli implementation.
+- Initial cli implementation. -->
+
+## [0.0.1] - 2022-07-09
+### Added
+- Got fuzzy path complete working; is too much hassle to keep though
 
 
 ## [0.0.0] - 2022-07-09
