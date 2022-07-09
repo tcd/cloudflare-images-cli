@@ -1,5 +1,7 @@
 import typescript from "@rollup/plugin-typescript"
-// import commonjs from "@rollup/plugin-commonjs"
+import commonjs from "@rollup/plugin-commonjs"
+import { nodeResolve } from "@rollup/plugin-node-resolve"
+
 
 /** @type {import('typescript').CompilerOptions} */
 const tsOptions = {
@@ -12,31 +14,46 @@ const config = {
     //     "./src/main.ts",
     //     "./src/Program.ts",
     // ],
-    input: "./src/cli/main.ts",
+    input: "./src/main.ts",
     output: [
-        // {
-        //     // dir: "dist",
-        //     format: "esm",
-        //     file: "./bin/main.mjs",
-        //     inlineDynamicImports: true,
-        // },
+        {
+            // dir: "dist",
+            format: "esm",
+            file: "./bin/main.mjs",
+            inlineDynamicImports: true,
+        },
         {
             file: "bin/main.cjs",
-            format: 'cjs',
-            exports: 'named',
-            sourcemap: true,
-            banner: '#! /usr/bin/env node',
+            format: "cjs",
+            exports: "named",
+            // sourcemap: false,
+            // banner: '#! /usr/bin/env node',
         },
     ],
     external: [
+        "inquirer",
     ],
     plugins: [
-        typescript({
-            tsconfig: "tsconfig.rollup.json",
-            exclude: "./test/**/*.ts",
-            // inlineSources: true,
+        nodeResolve({
+            // moduleDirectories: ["node_modules"],
+            // jsnext: false,
+            modulesOnly: true,
+            // main: true,
+            preferBuiltins: true,
         }),
-        // commonjs({ extensions: [".js", ".ts"] }) // the ".ts" extension is required
+        typescript({
+            tsconfig: "tsconfig.json",
+            exclude: "./test/**/*.ts",
+            inlineSources: true,
+            allowJs: true,
+
+        }),
+        commonjs({
+            include: [ "./main.ts", "node_modules/**" ], // Default: undefined
+            extensions: [".js", ".ts"], // the ".ts" extension is required
+            // if true then uses of `global` won't be dealt with by this plugin
+            ignoreGlobal: true, // Default: false
+        }),
     ],
 }
 

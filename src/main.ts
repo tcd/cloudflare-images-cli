@@ -1,1 +1,3 @@
-import { CloudflareClient } from "cloudflare-images"
+import { scratch } from "./lib/scratch";
+
+scratch()
