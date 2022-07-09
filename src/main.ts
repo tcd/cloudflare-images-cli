@@ -1,9 +1,7 @@
-// import { cli } from "./cli"
-import { uploadImage } from "./lib/commands/upload-image"
+import { cli } from "./cli"
 
 const main = async (): Promise<any> => {
-    // await cli()
-    await uploadImage()
+    await cli()
 }
 
 (async () => {

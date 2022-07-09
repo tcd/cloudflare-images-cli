@@ -7,6 +7,7 @@ export const HELP = `
       list-images    List images
       list-variants  List variants
       upload-image   Upload a local image file to Cloudflare
+      delete-image   Delete an image on Cloudflare Images
 
     Options
       --example    No options yet

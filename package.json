@@ -1,6 +1,6 @@
 {
     "name": "cloudflare-images-cli",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "description": "A CLI for the Cloudflare Images API.",
     "license": "MIT",
     "repository": "github:tcd/cloudflare-images-cli",
@@ -23,7 +23,7 @@
     ],
     "scripts": {
         "build": "cross-env NODE_ENV=production rollup -c rollup.config.js",
-        "cli": "node ./bin/main.mjs upload-image",
+        "cli": "node ./bin/main.mjs",
         "start": "npm run build && npm run cli",
         "reinstall": "cross-env rmdir ./node_modules"
     },

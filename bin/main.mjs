@@ -1,3 +1,4 @@
+import meow from 'meow';
 import { join } from 'path';
 import { homedir } from 'os';
 import { readFile, mkdir, writeFile, access } from 'fs/promises';
@@ -135,6 +136,25 @@ const inquire = (questions) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 
+const isBlank = (data) => {
+    if (data == undefined) {
+        return true;
+    }
+    if (data == null) {
+        return true;
+    }
+    if (data === "") {
+        return true;
+    }
+    if (Array.isArray(data) && data.length === 0) {
+        return true;
+    }
+    if (data.constructor === Object && Object.keys(data).length === 0) {
+        return true;
+    }
+    return false;
+};
+
 const logJson = (input) => {
     const output = JSON.stringify(input, null, 4);
     console.log(output);
@@ -146,6 +166,85 @@ const newClient = () => __awaiter(void 0, void 0, void 0, function* () {
         accountId: config.accountId,
         apiKey: config.apiKey,
     });
+});
+
+const questions$2 = [
+    {
+        name: "id",
+        type: "input",
+        message: "Cloudflare Image Id",
+    },
+];
+const deleteImage = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const answers = yield inquire(questions$2);
+        const client = yield newClient();
+        const response = yield client.deleteImage(answers.id);
+        logJson(response.result);
+        process.exit(0);
+    }
+    catch (error) {
+        console.error(error);
+        process.exit(1);
+    }
+});
+
+const questions$1 = [
+    {
+        name: "accountId",
+        type: "input",
+        message: "Cloudflare Account Id",
+    },
+    {
+        name: "apiKey",
+        type: "input",
+        message: "Cloudflare API Key",
+    },
+];
+const init = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const answers = yield inquire(questions$1);
+        if (isBlank(answers.accountId)) {
+            console.log("accountId can't be blank");
+            process.exit(1);
+        }
+        if (isBlank(answers.apiKey)) {
+            console.log("accountId can't be blank");
+            process.exit(1);
+        }
+        yield Config.write(answers);
+        console.log("setup complete 🥳");
+    }
+    catch (error) {
+        console.error(error);
+        process.exit(1);
+    }
+});
+
+const listImages = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const client = yield newClient();
+        const response = yield client.listImages({ page: 1, per_page: 100 });
+        logJson(response.result);
+        process.exit(0);
+    }
+    catch (error) {
+        console.error(error);
+        process.exit(1);
+    }
+});
+
+const listVariants = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const client = yield newClient();
+        const response = yield client.listVariants();
+        logJson(response.result);
+        process.exit(0);
+    }
+    catch (error) {
+        console.error(error);
+        process.exit(1);
+    }
 });
 
 const _uploadImage = (options) => __awaiter(void 0, void 0, void 0, function* () {
@@ -184,8 +283,71 @@ const uploadImage = () => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 
+const HELP = `
+    Usage
+      $ cf-images <command>
+
+    Commands
+      init           Configure Cloudflare credentials
+      list-images    List images
+      list-variants  List variants
+      upload-image   Upload a local image file to Cloudflare
+      delete-image   Delete an image on Cloudflare Images
+
+    Options
+      --example    No options yet
+
+    Examples
+      $ cf-images list-images >> cloudflare-images.json
+`;
+
+const COMMANDS = {
+    "init": init,
+    "list-images": listImages,
+    "list-variants": listVariants,
+    "upload-image": uploadImage,
+    "delete-image": deleteImage,
+};
+class Program {
+    constructor(args, flags) {
+        this.args = args;
+        this.flags = flags;
+    }
+    main() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const commandArg = this.args[0];
+                const command = COMMANDS[commandArg];
+                if (command == null || command == undefined) {
+                    console.log(HELP);
+                    process.exit(0);
+                }
+                yield command();
+                process.exit(0);
+            }
+            catch (e) {
+                if (e.code == "ENOENT") {
+                    console.error(`error - unable to find file: `);
+                }
+                else {
+                    console.error("error: " + e.message);
+                }
+                process.exit(1);
+            }
+        });
+    }
+}
+
+const cli = () => __awaiter(void 0, void 0, void 0, function* () {
+    const _cli = meow(HELP, {
+        importMeta: import.meta,
+        flags: {},
+    });
+    yield new Program(_cli.input, _cli.flags).main();
+});
+
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
-    yield uploadImage();
+    yield cli();
 });
 (() => __awaiter(void 0, void 0, void 0, function* () {
     main()

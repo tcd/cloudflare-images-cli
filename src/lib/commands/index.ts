@@ -1,3 +1,4 @@
+export * from "./delete-image"
 export * from "./init"
 export * from "./list-images"
 export * from "./list-variants"

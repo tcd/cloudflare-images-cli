@@ -8,6 +8,13 @@
 
 Command line interface for [cloudflare-images](https://github.com/tcd/cloudflare-images)
 
+## Features
+
+- list images
+- list image variants
+- upload individual images
+- delete individual images
+
 ## Related
 
 - [cloudflare-cli](https://github.com/danielpigott/cloudflare-cli) - CLI for interacting with Cloudflare
