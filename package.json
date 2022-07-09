@@ -23,13 +23,15 @@
     ],
     "scripts": {
         "build": "cross-env NODE_ENV=production rollup -c rollup.config.js",
-        "cli": "node ./bin/main.mjs",
-        "start": "npm run build && npm run cli"
+        "cli": "node ./bin/main.mjs upload-image",
+        "start": "npm run build && npm run cli",
+        "reinstall": "cross-env rmdir ./node_modules"
     },
     "dependencies": {
         "chalk": "^5.0.1",
         "cloudflare-images": "^0.4.1",
         "inquirer": "^9.0.0",
+        "inquirer-fuzzy-path": "github:tcd/inquirer-fuzzy-path#tcd",
         "meow": "^10.1.3"
     },
     "devDependencies": {
@@ -42,6 +44,7 @@
         "@typescript-eslint/parser": "^5.30.5",
         "cross-env": "^7.0.3",
         "eslint": "^8.19.0",
+        "rimraf": "^3.0.2",
         "rollup": "^2.76.0",
         "typescript": "^4.7.4"
     },

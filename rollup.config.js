@@ -31,17 +31,17 @@ const config = {
             // moduleDirectories: ["node_modules"],
             // jsnext: false,
             modulesOnly: true,
-            // main: true,
+            main: true,
             preferBuiltins: true,
         }),
         typescript({
             tsconfig: "tsconfig.json",
             // inlineSources: true,
-            // allowJs: true,
+            allowJs: true,
 
         }),
         commonjs({
-            include: [ "./main.ts", "node_modules/**" ], // Default: undefined
+            // include: [ "./main.ts", "node_modules/**" ], // Default: undefined
             extensions: [".js", ".ts"], // the ".ts" extension is required
             // if true then uses of `global` won't be dealt with by this plugin
             ignoreGlobal: true, // Default: false
