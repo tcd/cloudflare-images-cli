@@ -25,7 +25,8 @@
     },
     "dependencies": {
         "cloudflare-images": "^0.2.0",
-        "inquirer": "^9.0.0"
+        "inquirer": "^9.0.0",
+        "rc": "^1.2.8"
     },
     "devDependencies": {
         "@rollup/plugin-commonjs": "^22.0.1",

@@ -1,11 +1,12 @@
-import { promptForFilePath, scratch } from "./lib"
+import { promptForFilePath, scratch2 } from "./lib"
 
 // scratch()
 
 
 const main = async (): Promise<any> => {
-    const answer = await promptForFilePath("give me a file path")
-    return answer
+    // const answer = await promptForFilePath("give me a file path")
+    // return answer
+    await scratch2()
 }
 
 (async () => {
