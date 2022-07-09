@@ -1,6 +1,6 @@
 {
     "name": "cloudflare-images-cli",
-    "version": "0.0.0",
+    "version": "1.0.0",
     "description": "A CLI for the Cloudflare Images API.",
     "license": "MIT",
     "repository": "github:tcd/cloudflare-images-cli",
@@ -28,7 +28,7 @@
     },
     "dependencies": {
         "chalk": "^5.0.1",
-        "cloudflare-images": "^0.3.0",
+        "cloudflare-images": "^0.4.1",
         "inquirer": "^9.0.0",
         "meow": "^10.1.3"
     },

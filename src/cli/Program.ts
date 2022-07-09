@@ -1,11 +1,11 @@
-import { init, listImages } from "@lib/commands"
+import { init, listImages, listVariants } from "@lib/commands"
 import { CliArgs } from "./CliArgs"
 import { HELP } from "./help"
 
 const COMMANDS = {
-    "init": init,
-    "list": listImages,
-    "ls":   listImages,
+    "init":          init,
+    "list-images":   listImages,
+    "list-variants": listVariants,
 }
 
 export class Program {

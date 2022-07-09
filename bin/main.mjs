@@ -155,6 +155,11 @@ const isBlank = (data) => {
     return false;
 };
 
+const logJson = (input) => {
+    const output = JSON.stringify(input, null, 4);
+    console.log(output);
+};
+
 const questions = [
     {
         name: "accountId",
@@ -195,7 +200,7 @@ const listImages = () => __awaiter(void 0, void 0, void 0, function* () {
             apiKey: config.apiKey,
         });
         const response = yield client.listImages({ page: 1, per_page: 100 });
-        console.log(response);
+        logJson(response.result);
         process.exit(0);
     }
     catch (error) {
@@ -204,10 +209,43 @@ const listImages = () => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 
+const listVariants = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const config = yield Config.read();
+        const client = new CloudflareClient({
+            accountId: config.accountId,
+            apiKey: config.apiKey,
+        });
+        const response = yield client.listVariants();
+        logJson(response.result);
+        process.exit(0);
+    }
+    catch (error) {
+        console.error(error);
+        process.exit(1);
+    }
+});
+
+const HELP = `
+    Usage
+      $ cf-images <command>
+
+    Commands
+      init           Configure Cloudflare credentials
+      list-images    List images
+      list-variants  List variants
+
+    Options
+      --example    No options yet
+
+    Examples
+      $ cf-images list-images >> cloudflare-images.json
+`;
+
 const COMMANDS = {
     "init": init,
-    "list": listImages,
-    "ls": listImages,
+    "list-images": listImages,
+    "list-variants": listVariants,
 };
 class Program {
     constructor(args, flags) {
@@ -239,20 +277,6 @@ class Program {
     }
 }
 
-const HELP = `
-    Usage
-      $ cf-images <command>
-
-    Commands
-      init         Configure Cloudflare credentials
-      ls, list     List images
-
-    Options
-      --overwrite  Overwrite the input file
-
-    Examples
-      $ cf-images list
-`;
 const cli = () => __awaiter(void 0, void 0, void 0, function* () {
     const _cli = meow(HELP, {
         importMeta: import.meta,
