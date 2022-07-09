@@ -1,8 +1,7 @@
 import { ImageUploadRequest } from "cloudflare-images"
-import inquirer, { QuestionCollection } from "inquirer"
-import { InquirerFuzzyPath } from "inquirer-fuzzy-path"
+import { QuestionCollection } from "inquirer"
 
-import { newClient, logJson } from "@lib/helpers"
+import { newClient, logJson, inquire } from "@lib/helpers"
 
 const _uploadImage = async (options: ImageUploadRequest): Promise<void> => {
     try {
@@ -18,35 +17,21 @@ const _uploadImage = async (options: ImageUploadRequest): Promise<void> => {
 
 const questions: QuestionCollection = [
     {
-        type: "fuzzypath",
+        name: "id",
+        type: "input",
+        message: "Cloudflare Image Id",
+    },
+    {
         name: "path",
-        excludePath: (nodePath) => nodePath.startsWith("node_modules"),
-        itemType: "file",
-        message: "Choose a file to upload: ",
+        type: "input",
+        message: "Path to image file",
     },
 ]
 
-const getImageOptions = async (): Promise<any> => {
-    try {
-        inquirer.registerPrompt("fuzzypath", InquirerFuzzyPath)
-        const answers = await inquirer.prompt(questions)
-        return answers
-    } catch (error) {
-        if (error.isTtyError) {
-            // Prompt couldn't be rendered in the current environment
-            console.error(error)
-        } else {
-            // Something else went wrong
-            console.error(error)
-        }
-        process.exit(1)
-    }
-}
-
 export const uploadImage = async (): Promise<void> => {
     try {
-        const answers = await getImageOptions()
-        console.log(answers)
+        const options = await inquire<ImageUploadRequest>(questions)
+        await _uploadImage(options)
         process.exit(0)
     } catch (error) {
         console.error(error)
