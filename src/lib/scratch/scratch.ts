@@ -6,11 +6,11 @@ export const scratch = () => {
         .prompt([
             {
                 name: "faveReptile",
-                message: "What is your favorite reptile?"
+                message: "What is your favorite reptile?",
             },
         ])
         .then(answers => {
-            console.info("Answer:", answers.faveReptile);
+            console.info("Answer:", answers.faveReptile)
         })
         .catch((error) => {
             if (error.isTtyError) {
@@ -18,5 +18,5 @@ export const scratch = () => {
             } else {
                 // Something else went wrong
             }
-        });
+        })
 }
