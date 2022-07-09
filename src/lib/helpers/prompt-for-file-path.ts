@@ -33,5 +33,6 @@ export const promptForFilePath = async (prompt: string): Promise<string> => {
     })
     const question = promisify(rl.question).bind(rl)
     const answer = await question(prompt + " : ")
+    rl.close()
     return resolve(answer)
 }
