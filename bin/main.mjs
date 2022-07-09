@@ -1,11 +1,13 @@
-import inquirer from 'inquirer';
+import meow from 'meow';
 import { join } from 'path';
+import { homedir } from 'os';
+import { mkdir, writeFile, readFile, access } from 'fs/promises';
 import { constants } from 'fs';
+import inquirer from 'inquirer';
 import 'readline';
 import 'util';
 import 'process';
-import { homedir } from 'os';
-import { mkdir, writeFile, readFile, access } from 'fs/promises';
+import { CloudflareClient } from 'cloudflare-images';
 
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -32,44 +34,9 @@ function __awaiter(thisArg, _arguments, P, generator) {
     });
 }
 
-const inquire = (questions) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const answers = yield inquirer.prompt(questions);
-        return answers;
-    }
-    catch (error) {
-        if (error.isTtyError) {
-            console.error(error);
-        }
-        else {
-            console.error(error);
-        }
-        process.exit(1);
-    }
-});
-
-const isBlank = (data) => {
-    if (data == undefined) {
-        return true;
-    }
-    if (data == null) {
-        return true;
-    }
-    if (data === "") {
-        return true;
-    }
-    if (Array.isArray(data) && data.length === 0) {
-        return true;
-    }
-    if (data.constructor === Object && Object.keys(data).length === 0) {
-        return true;
-    }
-    return false;
-};
-
-const exists = (path) => {
+const exists = (path) => __awaiter(void 0, void 0, void 0, function* () {
     return access(path, constants.F_OK).then(() => true).catch(() => false);
-};
+});
 class Config {
     static get(property) {
         var _a;
@@ -103,7 +70,8 @@ class Config {
             try {
                 const doesExist = yield this.configExists();
                 if (!doesExist) {
-                    return null;
+                    console.log("please configure credentials by running 'cf-images init'");
+                    process.exit(1);
                 }
                 const fileContent = yield readFile(this.configFilePath());
                 const fileContentString = fileContent.toString();
@@ -152,6 +120,41 @@ class Config {
 Config.CONFIG_FOLDER_NAME = ".cf-images";
 Config.CONFIG_FILE_NAME = "cf-images.config.json";
 
+const inquire = (questions) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const answers = yield inquirer.prompt(questions);
+        return answers;
+    }
+    catch (error) {
+        if (error.isTtyError) {
+            console.error(error);
+        }
+        else {
+            console.error(error);
+        }
+        process.exit(1);
+    }
+});
+
+const isBlank = (data) => {
+    if (data == undefined) {
+        return true;
+    }
+    if (data == null) {
+        return true;
+    }
+    if (data === "") {
+        return true;
+    }
+    if (Array.isArray(data) && data.length === 0) {
+        return true;
+    }
+    if (data.constructor === Object && Object.keys(data).length === 0) {
+        return true;
+    }
+    return false;
+};
+
 const questions = [
     {
         name: "accountId",
@@ -176,8 +179,7 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
             process.exit(1);
         }
         yield Config.write(answers);
-        console.log(answers);
-        console.log("setup complete!");
+        console.log("setup complete 🥳");
     }
     catch (error) {
         console.error(error);
@@ -185,21 +187,89 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 
+const listImages = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const config = yield Config.read();
+        const client = new CloudflareClient({
+            accountId: config.accountId,
+            apiKey: config.apiKey,
+        });
+        const response = yield client.listImages({ page: 1, per_page: 100 });
+        console.log(response);
+        process.exit(0);
+    }
+    catch (error) {
+        console.error(error);
+        process.exit(1);
+    }
+});
+
+const COMMANDS = {
+    "init": init,
+    "list": listImages,
+    "ls": listImages,
+};
+class Program {
+    constructor(args, flags) {
+        this.args = args;
+        this.flags = flags;
+    }
+    main() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const commandArg = this.args[0];
+                const command = COMMANDS[commandArg];
+                if (command == null || command == undefined) {
+                    console.log(HELP);
+                    process.exit(0);
+                }
+                yield command();
+                process.exit(0);
+            }
+            catch (e) {
+                if (e.code == "ENOENT") {
+                    console.error(`error - unable to find file: `);
+                }
+                else {
+                    console.error("error: " + e.message);
+                }
+                process.exit(1);
+            }
+        });
+    }
+}
+
+const HELP = `
+    Usage
+      $ cf-images <command>
+
+    Commands
+      init         Configure Cloudflare credentials
+      ls, list     List images
+
+    Options
+      --overwrite  Overwrite the input file
+
+    Examples
+      $ cf-images list
+`;
+const cli = () => __awaiter(void 0, void 0, void 0, function* () {
+    const _cli = meow(HELP, {
+        importMeta: import.meta,
+        flags: {},
+    });
+    yield new Program(_cli.input, _cli.flags).main();
+});
+
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
-    yield init();
+    yield cli();
 });
 (() => __awaiter(void 0, void 0, void 0, function* () {
     main()
         .then((res) => {
-        if (res) {
-            console.log(res);
-        }
         process.exit(0);
     })
         .catch((error) => {
-        if (error) {
-            console.error(error);
-        }
         process.exit(1);
     });
 }))();

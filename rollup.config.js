@@ -23,6 +23,8 @@ const config = {
     ],
     external: [
         "inquirer",
+        "cloudflare-images",
+        "meow",
     ],
     plugins: [
         nodeResolve({
