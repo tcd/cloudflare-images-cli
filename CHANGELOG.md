@@ -8,5 +8,10 @@ The format is based on [Keep a Changelog][keep-a-changelog], and this project ad
 <!-- ## [Unreleased] -->
 
 
+## [1.0.0] - 2022-07-09
+### Added
+- Initial cli implementation.
+
+
 ## [0.0.0] - 2022-07-09
 - Claimed package name on npm

@@ -1,13 +1,8 @@
-import { CloudflareClient } from "cloudflare-images"
-import { Config, logJson } from "@lib/helpers"
+import { newClient, logJson } from "@lib/helpers"
 
 export const listImages = async (): Promise<void> => {
     try {
-        const config = await Config.read()
-        const client = new CloudflareClient({
-            accountId: config.accountId,
-            apiKey: config.apiKey,
-        })
+        const client = await newClient()
         const response = await client.listImages({ page: 1, per_page: 100 })
         logJson(response.result)
         process.exit(0)

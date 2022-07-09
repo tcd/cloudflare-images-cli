@@ -1,13 +1,8 @@
-import { CloudflareClient } from "cloudflare-images"
-import { Config, logJson } from "@lib/helpers"
+import { newClient, logJson } from "@lib/helpers"
 
 export const listVariants = async (): Promise<void> => {
     try {
-        const config = await Config.read()
-        const client = new CloudflareClient({
-            accountId: config.accountId,
-            apiKey: config.apiKey,
-        })
+        const client = await newClient()
         const response = await client.listVariants()
         logJson(response.result)
         process.exit(0)
