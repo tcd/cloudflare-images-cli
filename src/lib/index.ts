@@ -1,5 +1,3 @@
 export * from "./helpers"
-export * from "./Config"
-export * from "./init"
-
+export * from "./commands"
 export * from "./scratch"

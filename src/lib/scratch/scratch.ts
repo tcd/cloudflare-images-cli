@@ -1,4 +1,3 @@
-// import { inquirer } from "./inquirer"
 import inquirer from "inquirer"
 
 export const scratch = () => {

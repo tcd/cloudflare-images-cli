@@ -8,6 +8,10 @@
         "removeComments": true,
         "sourceMap": true,
         "baseUrl": "./",
+        "paths": {
+            "@lib":         [ "./src/lib/index.ts" ],
+            "@lib/helpers": [ "./src/lib/helpers/index.ts" ],
+        },
         "types": [
             "node"
         ],

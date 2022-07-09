@@ -1,6 +1,4 @@
-// import { CloudflareClient } from "cloudflare-images"
-// import inquirer from "inquirer"
-import { Config, IConfig } from ".."
+import { Config, IConfig } from "@lib/helpers"
 
 export const scratch2 = async () => {
     const newConfig: IConfig = {

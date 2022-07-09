@@ -3,7 +3,7 @@ import { homedir } from "os"
 import { access, mkdir, readFile, writeFile } from "fs/promises"
 import { constants as fsConstants } from "fs"
 
-const exists = (path: string): Promise<boolean> => {
+const exists = async (path: string): Promise<boolean> => {
     // return new Promise((resolve, reject) => {
     //     setTimeout(() => {
     //         const result = existsSync(path)
@@ -49,8 +49,9 @@ export abstract class Config {
         try {
             const doesExist = await this.configExists()
             if (!doesExist) {
-                // TODO: display message telling user to fonfigure cli
-                return null
+                console.log("please configure credentials by running 'cf-images init'")
+                process.exit(1)
+                // return null
             }
             const fileContent = await readFile(this.configFilePath())
             const fileContentString = fileContent.toString()

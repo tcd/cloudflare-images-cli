@@ -1,5 +1,5 @@
 import { QuestionCollection } from "inquirer"
-import { Config, IConfig, inquire, isBlank } from "."
+import { Config, IConfig, inquire, isBlank } from "@lib/helpers"
 
 const questions: QuestionCollection = [
     {

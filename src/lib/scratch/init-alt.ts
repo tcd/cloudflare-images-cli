@@ -1,4 +1,4 @@
-import { Config, isBlank, promptForInput } from ".."
+import { Config, isBlank, promptForInput } from "@lib/helpers"
 
 export const initAlt = async () => {
     try {
