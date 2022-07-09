@@ -1,0 +1,25 @@
+{
+    "name": "cloudflare-images-cli",
+    "version": "0.0.0",
+    "description": "A CLI for the Cloudflare Images API.",
+    "license": "MIT",
+    "repository": "github:tcd/cloudflare-images-cli",
+    "bugs": "https://github.com/tcd/cloudflare-images-cli/issues",
+    "author": "Clay Dunston <dunstontc@gmail.com>",
+    "scripts": {},
+    "dependencies": {},
+    "devDependencies": {},
+    "keywords": [
+        "cloudflare",
+        "Cloudflare",
+        "Cloudflare Images",
+        "API Client",
+        "Assets",
+        "cli",
+        "CLI",
+        "Command Line",
+        "Terminal",
+        "Tool",
+        "Tools"
+    ]
+}
