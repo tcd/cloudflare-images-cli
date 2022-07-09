@@ -1,2 +1,3 @@
-// export * from "./init"
-// export * from "./test"
+export * from "./init"
+export * from "./scratch"
+export * from "./promptForFilePath"

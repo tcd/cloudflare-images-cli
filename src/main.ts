@@ -1,3 +1,22 @@
-import { scratch } from "./lib/scratch";
+import { promptForFilePath, scratch } from "./lib"
 
-scratch()
+// scratch()
+
+
+const main = async (): Promise<any> => {
+    const answer = await promptForFilePath("give me a file path")
+    return answer
+}
+
+(async () => {
+    main()
+        .then((res) => {
+            // @ts-ignore:next-line
+            if (res) { console.log(res) }
+            process.exit(0)
+        })
+        .catch((error) => {
+            if (error) { console.error(error) }
+            process.exit(1)
+        })
+})()

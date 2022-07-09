@@ -12,6 +12,7 @@
     "main": "./bin/main.mjs",
     "files": [
         "!src/**/*.ts",
+        "./bin/main.mjs",
         "package.json",
         "CHANGELOG.md",
         "LICENSE.md",
@@ -19,7 +20,8 @@
     ],
     "scripts": {
         "build": "cross-env NODE_ENV=production rollup -c rollup.config.js",
-        "start": "node ./bin/main.mjs"
+        "cli": "node ./bin/main.mjs",
+        "start": "npm run build && npm run cli"
     },
     "dependencies": {
         "cloudflare-images": "^0.2.0",

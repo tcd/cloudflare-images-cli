@@ -2,33 +2,24 @@ import typescript from "@rollup/plugin-typescript"
 import commonjs from "@rollup/plugin-commonjs"
 import { nodeResolve } from "@rollup/plugin-node-resolve"
 
-
-/** @type {import('typescript').CompilerOptions} */
-const tsOptions = {
-    downlevelIteration: true,
-}
-
 /** @type {import('rollup').RollupOptions} */
 const config = {
-    // input: [
-    //     "./src/main.ts",
-    //     "./src/Program.ts",
-    // ],
     input: "./src/main.ts",
     output: [
         {
             // dir: "dist",
             format: "esm",
             file: "./bin/main.mjs",
+            sourcemap: true,
             inlineDynamicImports: true,
         },
-        {
-            file: "bin/main.cjs",
-            format: "cjs",
-            exports: "named",
-            // sourcemap: false,
-            // banner: '#! /usr/bin/env node',
-        },
+        // {
+        //     file: "bin/main.cjs",
+        //     format: "cjs",
+        //     exports: "named",
+        //     // sourcemap: false,
+        //     // banner: '#! /usr/bin/env node',
+        // },
     ],
     external: [
         "inquirer",
@@ -43,9 +34,8 @@ const config = {
         }),
         typescript({
             tsconfig: "tsconfig.json",
-            exclude: "./test/**/*.ts",
-            inlineSources: true,
-            allowJs: true,
+            // inlineSources: true,
+            // allowJs: true,
 
         }),
         commonjs({
