@@ -49,6 +49,7 @@ export abstract class Config {
         try {
             const doesExist = await this.configExists()
             if (!doesExist) {
+                // TODO: display message telling user to fonfigure cli
                 return null
             }
             const fileContent = await readFile(this.configFilePath())
@@ -61,16 +62,12 @@ export abstract class Config {
         }
     }
 
-    public static async write(config: IConfig = {}): Promise<any> {
+    public static async write(config: IConfig = {}): Promise<boolean> {
         try {
             const content = JSON.stringify(config)
-            const doesExist = await this.configExists()
-            if (doesExist) {
-                console.log("config already exists")
-            } else {
-                await mkdir(this.configFolderPath(), { recursive: true })
-                await writeFile(this.configFilePath(), content)
-            }
+            await mkdir(this.configFolderPath(), { recursive: true })
+            await writeFile(this.configFilePath(), content)
+            return true
         } catch (error) {
             console.error(error)
             process.exit(1)
