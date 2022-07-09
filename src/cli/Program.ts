@@ -1,4 +1,4 @@
-import { init, listImages, listVariants } from "@lib/commands"
+import { init, listImages, listVariants, uploadImage } from "@lib/commands"
 import { CliArgs } from "./CliArgs"
 import { HELP } from "./help"
 
@@ -6,6 +6,7 @@ const COMMANDS = {
     "init":          init,
     "list-images":   listImages,
     "list-variants": listVariants,
+    "upload-image":  uploadImage,
 }
 
 export class Program {
@@ -26,7 +27,12 @@ export class Program {
                 console.log(HELP)
                 process.exit(0)
             }
-            await command()
+            if (commandArg == "upload-image") {
+                // TODO: this one takes arguments
+                // uploadImage({})
+            } else {
+                await command()
+            }
             process.exit(0)
         } catch (e) {
             if (e.code == "ENOENT") {

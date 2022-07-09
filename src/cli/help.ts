@@ -6,6 +6,7 @@ export const HELP = `
       init           Configure Cloudflare credentials
       list-images    List images
       list-variants  List variants
+      upload-image   Upload a local image file to Cloudflare
 
     Options
       --example    No options yet
