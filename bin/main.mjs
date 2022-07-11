@@ -304,7 +304,8 @@ const HELP = `
       delete-image   Delete an image on Cloudflare Images
 
     Options
-      --example    No options yet
+      --help         Show usage information
+      --version      Show version information
 
     Examples
       $ cf-images list-images >> cloudflare-images.json
