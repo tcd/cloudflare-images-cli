@@ -1,5 +1,5 @@
 import { deleteImage, init, listImages, listVariants, uploadImage, CliCommand } from "@lib/commands"
-import { CliArgs } from "./CliArgs"
+import { CliFlags } from "./CliFlags"
 import { HELP } from "./help"
 
 const COMMANDS: Record<string, CliCommand> = {
@@ -13,7 +13,7 @@ const COMMANDS: Record<string, CliCommand> = {
 export class Program {
 
     public args: string[]
-    public flags: CliArgs
+    public flags: CliFlags
 
     constructor(args: any, flags: any) {
         this.args   = args

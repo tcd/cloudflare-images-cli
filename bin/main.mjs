@@ -226,7 +226,7 @@ const listImages = (flags) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const client = yield newClient();
         const response = yield client.listImages({ page: 1, per_page: 100 });
-        if (flags === null || flags === void 0 ? void 0 : flags.debug) {
+        if (flags === null || flags === void 0 ? void 0 : flags.verbose) {
             logJson(response);
         }
         else {
@@ -244,7 +244,7 @@ const listVariants = (flags) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const client = yield newClient();
         const response = yield client.listVariants();
-        if (flags === null || flags === void 0 ? void 0 : flags.debug) {
+        if (flags === null || flags === void 0 ? void 0 : flags.verbose) {
             logJson(response);
         }
         else {
@@ -301,22 +301,44 @@ const commands = [
     { name: "upload-image", description: "Upload a local image file to Cloudflare" },
     { name: "delete-image", description: "Delete an image on Cloudflare Images" },
 ];
-Math.max(...(commands.map(x => x.name.length)));
+const flags = [
+    { name: "help", alias: "h", description: "Show usage information" },
+    { name: "version", alias: "V", description: "Show version information" },
+    { name: "verbose", alias: "v", description: "Verbose output" },
+];
+const flagLength = (flag) => {
+    var _a;
+    let dashLength = 2;
+    let nameLength = flag.name.length;
+    if ((_a = flag === null || flag === void 0 ? void 0 : flag.alias) === null || _a === void 0 ? void 0 : _a.length) {
+        dashLength += 2;
+        nameLength += flag.alias.length;
+    }
+    const length = nameLength + dashLength;
+    return length;
+};
+const longestCommandName = Math.max(...(commands.map(command => command.name.length)));
+const longestFlagName = Math.max(...(flags.map(flag => flagLength(flag))));
+const longestFlagAlias = Math.max(...(flags.map(flag => { var _a, _b; return (_b = (_a = flag === null || flag === void 0 ? void 0 : flag.alias) === null || _a === void 0 ? void 0 : _a.length) !== null && _b !== void 0 ? _b : 0; })));
+const INDENT = " ".repeat(6);
+const commandHelp = commands.map(({ name, description }) => {
+    return INDENT + name.padEnd(longestCommandName + 2, " ") + description;
+}).join("\n");
+const flagHelp = flags.map((flag) => {
+    var _a;
+    const nameText = `--${flag.name}`;
+    const aliasText = ((_a = flag === null || flag === void 0 ? void 0 : flag.alias) === null || _a === void 0 ? void 0 : _a.length) ? `-${flag.alias} ` : " ".repeat(longestFlagAlias + 2);
+    return INDENT + (aliasText + nameText).padEnd(longestFlagName + 2, " ") + flag.description;
+}).join("\n");
 const HELP = `
     Usage
       $ cf-images <command>
 
     Commands
-      init           Configure Cloudflare credentials
-      list-images    List images
-      list-variants  List variants
-      upload-image   Upload a local image file to Cloudflare
-      delete-image   Delete an image on Cloudflare Images
+${commandHelp}
 
     Options
-      --help         Show usage information
-      --version      Show version information
-      -d --debug     Enable verbose output
+${flagHelp}
 
     Examples
       $ cf-images list-images >> cloudflare-images.json
@@ -359,12 +381,10 @@ class Program {
     }
 }
 
-var version = "1.0.2";
+var version = "1.1.0";
 
 const versionNumber = version;
-const VERSION = `
-    ${versionNumber}
-`;
+const VERSION = `cf-images version ${versionNumber}`;
 
 const cli = () => __awaiter(void 0, void 0, void 0, function* () {
     const _cli = meow(HELP, {
@@ -372,6 +392,16 @@ const cli = () => __awaiter(void 0, void 0, void 0, function* () {
         flags: {
             debug: {
                 alias: "d",
+                type: "boolean",
+                default: false,
+            },
+            verbose: {
+                alias: "v",
+                type: "boolean",
+                default: false,
+            },
+            version: {
+                alias: "V",
                 type: "boolean",
                 default: false,
             },

@@ -1,7 +1,7 @@
 import meow from "meow"
 
 import { Program } from "./Program"
-import { CliArgs } from "./CliArgs"
+import { CliFlags } from "./CliFlags"
 import { HELP } from "./help"
 import { VERSION } from "./version"
 
@@ -15,12 +15,22 @@ export const cli = async (): Promise<void> => {
                 type: "boolean",
                 default: false,
             },
+            verbose: {
+                alias: "v",
+                type: "boolean",
+                default: false,
+            },
+            version: {
+                alias: "V",
+                type: "boolean",
+                default: false,
+            },
         },
         version: VERSION,
     })
     // @ts-ignore:next-line
     await new Program(
         _cli.input,
-    _cli.flags as unknown as CliArgs,
+    _cli.flags as unknown as CliFlags,
     ).main()
 }

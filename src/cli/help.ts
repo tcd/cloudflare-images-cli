@@ -19,27 +19,46 @@ const commands: Command[] = [
 
 const flags: Flag[] = [
     { name: "help",    alias: "h", description: "Show usage information"   },
-    { name: "version", alias: "v", description: "Show version information" },
+    { name: "version", alias: "V", description: "Show version information" },
+    { name: "verbose", alias: "v", description: "Verbose output" },
+    // { name: "debug",   alias: "d", description: "Verbose output" },
 ]
 
-const longestCommandName = Math.max(...(commands.map(x => x.name.length)))
-// const longestFlagName    = Math.max(...(commands.map(x => x.name.length)))
+const flagLength = (flag: Flag): number => {
+    let dashLength = 2 // --<name>
+    let nameLength = flag.name.length // <name>
+    if (flag?.alias?.length) {
+        dashLength += 2 // -<alias>\s
+        nameLength += flag.alias.length // <alias>
+    }
+    const length = nameLength + dashLength
+    return length
+}
+
+const longestCommandName = Math.max(...(commands.map(command => command.name.length)))
+const longestFlagName    = Math.max(...(flags.map(flag => flagLength(flag))))
+const longestFlagAlias   = Math.max(...(flags.map(flag => flag?.alias?.length ?? 0)))
+const INDENT = " ".repeat(6)
+
+const commandHelp = commands.map(({ name, description }) => {
+    return INDENT + name.padEnd(longestCommandName + 2, " ") + description
+}).join("\n")
+
+const flagHelp = flags.map((flag) => {
+    const nameText = `--${flag.name}`
+    const aliasText = (flag?.alias?.length) ? `-${flag.alias} ` : " ".repeat(longestFlagAlias + 2)
+    return INDENT + (aliasText + nameText).padEnd(longestFlagName + 2, " ") + flag.description
+}).join("\n")
 
 export const HELP = `
     Usage
       $ cf-images <command>
 
     Commands
-      init           Configure Cloudflare credentials
-      list-images    List images
-      list-variants  List variants
-      upload-image   Upload a local image file to Cloudflare
-      delete-image   Delete an image on Cloudflare Images
+${commandHelp}
 
     Options
-      --help         Show usage information
-      --version      Show version information
-      -d --debug     Enable verbose output
+${flagHelp}
 
     Examples
       $ cf-images list-images >> cloudflare-images.json

@@ -5,7 +5,7 @@ export const listVariants: CliCommand = async (flags) => {
     try {
         const client = await newClient()
         const response = await client.listVariants()
-        if (flags?.debug) {
+        if (flags?.verbose) {
             logJson(response)
         } else {
             logJson(response.result)

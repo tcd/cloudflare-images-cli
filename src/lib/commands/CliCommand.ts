@@ -1,3 +1,3 @@
-import { CliArgs } from "src/cli/CliArgs"
+import { CliFlags } from "src/cli/CliFlags"
 
-export type CliCommand = (flags: CliArgs) => Promise<void>
+export type CliCommand = (flags: CliFlags) => Promise<void>

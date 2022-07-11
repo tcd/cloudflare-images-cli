@@ -5,7 +5,7 @@ export const listImages: CliCommand = async (flags) => {
     try {
         const client = await newClient()
         const response = await client.listImages({ page: 1, per_page: 100 })
-        if (flags?.debug) {
+        if (flags?.verbose) {
             logJson(response)
         } else {
             logJson(response.result)
