@@ -15,6 +15,15 @@ Command line interface for [cloudflare-images](https://github.com/tcd/cloudflare
 - upload individual images
 - delete individual images
 
+## Usage
+
+```sh
+# install
+npm install -g cloudflare-images-cli
+# use
+cf-images init
+```
+
 ## Related
 
 - [cloudflare-cli](https://github.com/danielpigott/cloudflare-cli) - CLI for interacting with Cloudflare

@@ -12,6 +12,7 @@ const config = {
             file: "./bin/main.mjs",
             sourcemap: true,
             inlineDynamicImports: true,
+            banner: "#! /usr/bin/env node",
         },
         // {
         //     file: "bin/main.cjs",

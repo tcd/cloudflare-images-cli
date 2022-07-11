@@ -1,3 +1,4 @@
+#! /usr/bin/env node
 import meow from 'meow';
 import { join } from 'path';
 import { homedir } from 'os';
@@ -283,6 +284,14 @@ const uploadImage = () => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 
+const commands = [
+    { name: "init", description: "Configure Cloudflare credentials" },
+    { name: "list-images", description: "List images" },
+    { name: "list-variants", description: "List variants" },
+    { name: "upload-image", description: "Upload a local image file to Cloudflare" },
+    { name: "delete-image", description: "Delete an image on Cloudflare Images" },
+];
+Math.max(...(commands.map(x => x.name.length)));
 const HELP = `
     Usage
       $ cf-images <command>

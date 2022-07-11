@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog][keep-a-changelog], and this project ad
 <!-- ## [Unreleased] -->
 
 
+## [1.0.1] - 2022-07-11
+### Fixed
+- Added shebang to binary.
+### Changed
+- Updated readme.
+
+
 ## [1.0.0] - 2022-07-09
 ### Added
 - Initial cli implementation.
