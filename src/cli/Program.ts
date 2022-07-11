@@ -1,8 +1,8 @@
-import { deleteImage, init, listImages, listVariants, uploadImage } from "@lib/commands"
+import { deleteImage, init, listImages, listVariants, uploadImage, CliCommand } from "@lib/commands"
 import { CliArgs } from "./CliArgs"
 import { HELP } from "./help"
 
-const COMMANDS = {
+const COMMANDS: Record<string, CliCommand> = {
     "init":          init,
     "list-images":   listImages,
     "list-variants": listVariants,
@@ -28,7 +28,7 @@ export class Program {
                 console.log(HELP)
                 process.exit(0)
             }
-            await command()
+            await command(this.flags)
             process.exit(0)
         } catch (e) {
             if (e.code == "ENOENT") {

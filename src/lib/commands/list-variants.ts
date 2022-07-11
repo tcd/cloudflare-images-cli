@@ -1,10 +1,15 @@
 import { newClient, logJson } from "@lib/helpers"
+import { CliCommand } from "./CliCommand"
 
-export const listVariants = async (): Promise<void> => {
+export const listVariants: CliCommand = async (flags) => {
     try {
         const client = await newClient()
         const response = await client.listVariants()
-        logJson(response.result)
+        if (flags?.debug) {
+            logJson(response)
+        } else {
+            logJson(response.result)
+        }
         process.exit(0)
     } catch (error) {
         console.error(error)

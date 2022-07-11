@@ -5,6 +5,7 @@ interface Command {
 
 interface Flag {
     name: string
+    alias?: string
     description: string
 }
 
@@ -16,7 +17,13 @@ const commands: Command[] = [
     { name: "delete-image",  description: "Delete an image on Cloudflare Images" },
 ]
 
+const flags: Flag[] = [
+    { name: "help",    alias: "h", description: "Show usage information"   },
+    { name: "version", alias: "v", description: "Show version information" },
+]
+
 const longestCommandName = Math.max(...(commands.map(x => x.name.length)))
+// const longestFlagName    = Math.max(...(commands.map(x => x.name.length)))
 
 export const HELP = `
     Usage
@@ -32,6 +39,7 @@ export const HELP = `
     Options
       --help         Show usage information
       --version      Show version information
+      -d --debug     Enable verbose output
 
     Examples
       $ cf-images list-images >> cloudflare-images.json

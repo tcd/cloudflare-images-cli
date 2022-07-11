@@ -3,6 +3,7 @@ import inquirer, { QuestionCollection } from "inquirer"
 import { InquirerFuzzyPath } from "inquirer-fuzzy-path"
 
 import { newClient, logJson } from "@lib/helpers"
+import { CliCommand } from "./CliCommand"
 
 const _uploadImage = async (options: ImageUploadRequest): Promise<void> => {
     try {
@@ -43,7 +44,7 @@ const getImageOptions = async (): Promise<any> => {
     }
 }
 
-export const uploadImage = async (): Promise<void> => {
+export const uploadImage: CliCommand = async (_flags) => {
     try {
         const answers = await getImageOptions()
         console.log(answers)

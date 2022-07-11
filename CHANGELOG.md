@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog][keep-a-changelog], and this project ad
 <!-- ## [Unreleased] -->
 
 
+## [1.1.0] - 2022-07-11
+### Added
+- Verbose output flag (`-d`, `--debug`).
+### Changed
+- Improved version output.
+- Added TS type for cli commands.
+
+
 ## [1.0.2] - 2022-07-11
 ### Changed
 - Updated help output.

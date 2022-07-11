@@ -1,3 +1,4 @@
+export * from "./CliCommand"
 export * from "./delete-image"
 export * from "./init"
 export * from "./list-images"

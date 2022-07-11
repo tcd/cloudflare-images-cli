@@ -176,7 +176,7 @@ const questions$2 = [
         message: "Cloudflare Image Id",
     },
 ];
-const deleteImage = () => __awaiter(void 0, void 0, void 0, function* () {
+const deleteImage = (_) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const answers = yield inquire(questions$2);
         const client = yield newClient();
@@ -222,11 +222,16 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 
-const listImages = () => __awaiter(void 0, void 0, void 0, function* () {
+const listImages = (flags) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const client = yield newClient();
         const response = yield client.listImages({ page: 1, per_page: 100 });
-        logJson(response.result);
+        if (flags === null || flags === void 0 ? void 0 : flags.debug) {
+            logJson(response);
+        }
+        else {
+            logJson(response.result);
+        }
         process.exit(0);
     }
     catch (error) {
@@ -235,11 +240,16 @@ const listImages = () => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 
-const listVariants = () => __awaiter(void 0, void 0, void 0, function* () {
+const listVariants = (flags) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const client = yield newClient();
         const response = yield client.listVariants();
-        logJson(response.result);
+        if (flags === null || flags === void 0 ? void 0 : flags.debug) {
+            logJson(response);
+        }
+        else {
+            logJson(response.result);
+        }
         process.exit(0);
     }
     catch (error) {
@@ -272,7 +282,7 @@ const questions = [
         message: "Path to image file",
     },
 ];
-const uploadImage = () => __awaiter(void 0, void 0, void 0, function* () {
+const uploadImage = (_flags) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const options = yield inquire(questions);
         yield _uploadImage(options);
@@ -306,6 +316,7 @@ const HELP = `
     Options
       --help         Show usage information
       --version      Show version information
+      -d --debug     Enable verbose output
 
     Examples
       $ cf-images list-images >> cloudflare-images.json
@@ -332,7 +343,7 @@ class Program {
                     console.log(HELP);
                     process.exit(0);
                 }
-                yield command();
+                yield command(this.flags);
                 process.exit(0);
             }
             catch (e) {
@@ -348,10 +359,24 @@ class Program {
     }
 }
 
+var version = "1.0.2";
+
+const versionNumber = version;
+const VERSION = `
+    ${versionNumber}
+`;
+
 const cli = () => __awaiter(void 0, void 0, void 0, function* () {
     const _cli = meow(HELP, {
         importMeta: import.meta,
-        flags: {},
+        flags: {
+            debug: {
+                alias: "d",
+                type: "boolean",
+                default: false,
+            },
+        },
+        version: VERSION,
     });
     yield new Program(_cli.input, _cli.flags).main();
 });

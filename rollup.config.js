@@ -1,5 +1,6 @@
 import typescript from "@rollup/plugin-typescript"
 import commonjs from "@rollup/plugin-commonjs"
+import json from "@rollup/plugin-json"
 import { nodeResolve } from "@rollup/plugin-node-resolve"
 
 /** @type {import('rollup').RollupOptions} */
@@ -28,6 +29,7 @@ const config = {
         "meow",
     ],
     plugins: [
+        json(),
         nodeResolve({
             // moduleDirectories: ["node_modules"],
             // jsnext: false,

@@ -2,6 +2,8 @@ import { ImageUploadRequest } from "cloudflare-images"
 import { QuestionCollection } from "inquirer"
 
 import { newClient, logJson, inquire } from "@lib/helpers"
+import { CliCommand } from "./CliCommand"
+
 
 const _uploadImage = async (options: ImageUploadRequest): Promise<void> => {
     try {
@@ -28,7 +30,7 @@ const questions: QuestionCollection = [
     },
 ]
 
-export const uploadImage = async (): Promise<void> => {
+export const uploadImage: CliCommand = async (_flags) => {
     try {
         const options = await inquire<ImageUploadRequest>(questions)
         await _uploadImage(options)

@@ -1,6 +1,7 @@
 import { QuestionCollection } from "inquirer"
 
 import { newClient, logJson, inquire } from "@lib/helpers"
+import { CliCommand } from "./CliCommand"
 
 const questions: QuestionCollection = [
     {
@@ -10,7 +11,7 @@ const questions: QuestionCollection = [
     },
 ]
 
-export const deleteImage = async (): Promise<void> => {
+export const deleteImage: CliCommand = async (_) => {
     try {
         const answers = await inquire(questions)
         const client = await newClient()
