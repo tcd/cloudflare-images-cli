@@ -1,4 +1,6 @@
 import { QuestionCollection } from "inquirer"
+
+import { CLICommand } from "cloudflare-images-cli"
 import { Config, IConfig, inquire, isBlank } from "@lib/helpers"
 
 const questions: QuestionCollection = [
@@ -14,7 +16,7 @@ const questions: QuestionCollection = [
     },
 ]
 
-export const init = async () => {
+export const init: CLICommand = async (_) => {
     try {
         const answers = await inquire<IConfig>(questions)
         if (isBlank(answers.accountId)) {

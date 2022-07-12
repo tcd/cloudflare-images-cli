@@ -1,7 +1,7 @@
 import meow from "meow"
 
+import { CLIFlags } from "cloudflare-images-cli"
 import { Program } from "./Program"
-import { CliFlags } from "./CliFlags"
 import { HELP } from "./help"
 import { VERSION } from "./version"
 
@@ -31,6 +31,6 @@ export const cli = async (): Promise<void> => {
     // @ts-ignore:next-line
     await new Program(
         _cli.input,
-    _cli.flags as unknown as CliFlags,
+    _cli.flags as unknown as CLIFlags,
     ).main()
 }

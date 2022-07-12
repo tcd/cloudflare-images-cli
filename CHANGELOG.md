@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog][keep-a-changelog], and this project ad
 <!-- ## [Unreleased] -->
 
 
+## [1.2.0] - 2022-07-11
+### Changed
+- Some code refactoring
+
+
 ## [1.1.0] - 2022-07-11
 ### Added
 - Added verbose output flag (`-v`, `--verbose`).

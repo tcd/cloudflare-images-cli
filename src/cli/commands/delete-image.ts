@@ -1,7 +1,7 @@
 import { QuestionCollection } from "inquirer"
 
+import { CLICommand } from "cloudflare-images-cli"
 import { newClient, logJson, inquire } from "@lib/helpers"
-import { CliCommand } from "./CliCommand"
 
 const questions: QuestionCollection = [
     {
@@ -11,7 +11,7 @@ const questions: QuestionCollection = [
     },
 ]
 
-export const deleteImage: CliCommand = async (_) => {
+export const deleteImage: CLICommand = async (_) => {
     try {
         const answers = await inquire(questions)
         const client = await newClient()

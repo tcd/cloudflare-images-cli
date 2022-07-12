@@ -1,8 +1,8 @@
-import { deleteImage, init, listImages, listVariants, uploadImage, CliCommand } from "@lib/commands"
-import { CliFlags } from "./CliFlags"
+import { CLIFlags, CLICommand } from "cloudflare-images-cli"
+import { deleteImage, init, listImages, listVariants, uploadImage } from "./commands"
 import { HELP } from "./help"
 
-const COMMANDS: Record<string, CliCommand> = {
+const COMMANDS: Record<string, CLICommand> = {
     "init":          init,
     "list-images":   listImages,
     "list-variants": listVariants,
@@ -13,7 +13,7 @@ const COMMANDS: Record<string, CliCommand> = {
 export class Program {
 
     public args: string[]
-    public flags: CliFlags
+    public flags: CLIFlags
 
     constructor(args: any, flags: any) {
         this.args   = args

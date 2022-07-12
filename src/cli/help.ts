@@ -1,13 +1,4 @@
-interface Command {
-    name: string
-    description: string
-}
-
-interface Flag {
-    name: string
-    alias?: string
-    description: string
-}
+import { Command, Flag } from "cloudflare-images-cli"
 
 const commands: Command[] = [
     { name: "init",          description: "Configure Cloudflare credentials" },

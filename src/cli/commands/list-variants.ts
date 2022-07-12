@@ -1,10 +1,10 @@
+import { CLICommand } from "cloudflare-images-cli"
 import { newClient, logJson } from "@lib/helpers"
-import { CliCommand } from "./CliCommand"
 
-export const listImages: CliCommand = async (flags) => {
+export const listVariants: CLICommand = async (flags) => {
     try {
         const client = await newClient()
-        const response = await client.listImages({ page: 1, per_page: 100 })
+        const response = await client.listVariants()
         if (flags?.verbose) {
             logJson(response)
         } else {

@@ -202,7 +202,7 @@ const questions$1 = [
         message: "Cloudflare API Key",
     },
 ];
-const init = () => __awaiter(void 0, void 0, void 0, function* () {
+const init = (_) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const answers = yield inquire(questions$1);
         if (isBlank(answers.accountId)) {
