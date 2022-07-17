@@ -5,6 +5,17 @@ declare module "cloudflare-images-cli" {
         description: string
     }
 
+    export type FlagType = "string" | "boolean" | "number";
+
+    export interface FlagConfig {
+        type: "string" | "boolean" | "number"
+        name: string
+        alias?: string
+        default: string | boolean | number
+        description: string
+        isMultiple?: boolean
+    }
+
     export interface Flag {
         name: string
         alias?: string
@@ -16,6 +27,7 @@ declare module "cloudflare-images-cli" {
         version?:    boolean
         verbose?:    boolean
         configPath?: string
+        path?:       string
     }
 
     export interface NameTransformationOptions {
@@ -24,4 +36,5 @@ declare module "cloudflare-images-cli" {
     }
 
     export type CLICommand = (flags: CLIFlags) => Promise<void>
+
 }

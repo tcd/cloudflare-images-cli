@@ -1,4 +1,6 @@
-import { Command, Flag } from "cloudflare-images-cli"
+import { Command, FlagConfig } from "cloudflare-images-cli"
+
+import { FLAG_CONFIGS } from "./flags"
 
 const commands: Command[] = [
     { name: "init",          description: "Configure Cloudflare credentials" },
@@ -8,15 +10,7 @@ const commands: Command[] = [
     { name: "delete-image",  description: "Delete an image on Cloudflare Images" },
 ]
 
-const flags: Flag[] = [
-    { name: "path",    alias: "p", description: "Path to a file or folder" },
-    { name: "help",    alias: "h", description: "Show usage information"   },
-    { name: "version", alias: "V", description: "Show version information" },
-    { name: "verbose", alias: "v", description: "Verbose output" },
-    // { name: "debug",   alias: "d", description: "Verbose output" },
-]
-
-const flagLength = (flag: Flag): number => {
+const flagLength = (flag: FlagConfig): number => {
     let dashLength = 2 // --<name>
     let nameLength = flag.name.length // <name>
     if (flag?.alias?.length) {
@@ -29,8 +23,8 @@ const flagLength = (flag: Flag): number => {
 
 const INDENT = " ".repeat(6)
 const longestCommandName = Math.max(...(commands.map(command => command.name.length)))
-const longestFlagName    = Math.max(...(flags.map(flag => flagLength(flag))))
-const longestFlagAlias   = Math.max(...(flags.map(flag => flag?.alias?.length ?? 0)))
+const longestFlagName    = Math.max(...(FLAG_CONFIGS.map(flag => flagLength(flag))))
+const longestFlagAlias   = Math.max(...(FLAG_CONFIGS.map(flag => flag?.alias?.length ?? 0)))
 
 const formatCommandHelp = ({ name, description }: Command): string => {
     const result = [
@@ -41,7 +35,7 @@ const formatCommandHelp = ({ name, description }: Command): string => {
     return result
 }
 
-const formatFlagHelp = (flag: Flag): string => {
+const formatFlagHelp = (flag: FlagConfig): string => {
     const nameText = `--${flag.name}`
     const aliasText =
         (flag?.alias?.length)
@@ -56,7 +50,7 @@ const formatFlagHelp = (flag: Flag): string => {
 }
 
 const commandHelp = commands.map((command) => formatCommandHelp(command)).join("\n")
-const flagHelp    = flags.map((flag) => formatFlagHelp(flag)).join("\n")
+const flagHelp    = FLAG_CONFIGS.map((flag) => formatFlagHelp(flag)).join("\n")
 
 export const HELP = `
     Usage
