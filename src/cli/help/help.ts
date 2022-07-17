@@ -9,6 +9,7 @@ const commands: Command[] = [
 ]
 
 const flags: Flag[] = [
+    { name: "path",    alias: "p", description: "Path to a file or folder" },
     { name: "help",    alias: "h", description: "Show usage information"   },
     { name: "version", alias: "V", description: "Show version information" },
     { name: "verbose", alias: "v", description: "Verbose output" },
@@ -26,20 +27,36 @@ const flagLength = (flag: Flag): number => {
     return length
 }
 
+const INDENT = " ".repeat(6)
 const longestCommandName = Math.max(...(commands.map(command => command.name.length)))
 const longestFlagName    = Math.max(...(flags.map(flag => flagLength(flag))))
 const longestFlagAlias   = Math.max(...(flags.map(flag => flag?.alias?.length ?? 0)))
-const INDENT = " ".repeat(6)
 
-const commandHelp = commands.map(({ name, description }) => {
-    return INDENT + name.padEnd(longestCommandName + 2, " ") + description
-}).join("\n")
+const formatCommandHelp = ({ name, description }: Command): string => {
+    const result = [
+        INDENT,
+        name.padEnd(longestCommandName + 2, " "),
+        description,
+    ].join("")
+    return result
+}
 
-const flagHelp = flags.map((flag) => {
+const formatFlagHelp = (flag: Flag): string => {
     const nameText = `--${flag.name}`
-    const aliasText = (flag?.alias?.length) ? `-${flag.alias} ` : " ".repeat(longestFlagAlias + 2)
-    return INDENT + (aliasText + nameText).padEnd(longestFlagName + 2, " ") + flag.description
-}).join("\n")
+    const aliasText =
+        (flag?.alias?.length)
+            ? `-${flag.alias} `
+            : " ".repeat(longestFlagAlias + 2)
+    const result = [
+        INDENT,
+        (aliasText + nameText).padEnd(longestFlagName + 2, " "),
+        flag.description,
+    ].join("")
+    return result
+}
+
+const commandHelp = commands.map((command) => formatCommandHelp(command)).join("\n")
+const flagHelp    = flags.map((flag) => formatFlagHelp(flag)).join("\n")
 
 export const HELP = `
     Usage
