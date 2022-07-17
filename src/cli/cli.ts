@@ -10,21 +10,10 @@ export const cli = async (): Promise<void> => {
         // @ts-ignore:next-line
         importMeta: import.meta,
         flags: {
-            debug: {
-                alias: "d",
-                type: "boolean",
-                default: false,
-            },
-            verbose: {
-                alias: "v",
-                type: "boolean",
-                default: false,
-            },
-            version: {
-                alias: "V",
-                type: "boolean",
-                default: false,
-            },
+            path:    { alias: "p", type: "string",  default: null  },
+            debug:   { alias: "d", type: "boolean", default: false },
+            verbose: { alias: "v", type: "boolean", default: false },
+            version: { alias: "V", type: "boolean", default: false },
         },
         version: VERSION,
     })

@@ -12,12 +12,12 @@ const COMMANDS: Record<string, CLICommand> = {
 
 export class Program {
 
-    public args: string[]
+    public args:  string[]
     public flags: CLIFlags
 
     constructor(args: any, flags: any) {
-        this.args   = args
-        this.flags  = flags
+        this.args  = args
+        this.flags = flags
     }
 
     public async main() {
