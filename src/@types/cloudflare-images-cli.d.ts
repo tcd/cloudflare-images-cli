@@ -12,10 +12,11 @@ declare module "cloudflare-images-cli" {
     }
 
     export interface CLIFlags {
-        help?:       boolean
-        version?:    boolean
-        verbose?:    boolean
-        configPath?: string
+        help?:    boolean
+        version?: boolean
+        verbose?: boolean
+        config?:  string
+        path?:    string
     }
 
     export interface NameTransformationOptions {

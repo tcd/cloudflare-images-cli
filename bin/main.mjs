@@ -9,6 +9,7 @@ import { CloudflareClient } from 'cloudflare-images';
 import 'readline';
 import 'util';
 import 'process';
+import { Pathname } from 'pathname-ts';
 
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -294,6 +295,29 @@ const uploadImage = (_flags) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 
+const uploadImages = (flags) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        if (isBlank(flags === null || flags === void 0 ? void 0 : flags.config)) {
+            console.log("config file required");
+            process.exit(1);
+        }
+        console.log(flags.config);
+        process.exit(0);
+        try {
+            const configPath = new Pathname(flags.config);
+            const config = yield configPath.readJSON();
+            logJson(config);
+        }
+        catch (error) {
+        }
+        process.exit(0);
+    }
+    catch (error) {
+        console.error(error);
+        process.exit(1);
+    }
+});
+
 const commands = [
     { name: "init", description: "Configure Cloudflare credentials" },
     { name: "list-images", description: "List images" },
@@ -302,6 +326,7 @@ const commands = [
     { name: "delete-image", description: "Delete an image on Cloudflare Images" },
 ];
 const flags = [
+    { name: "path", alias: "p", description: "Path to a file or folder" },
     { name: "help", alias: "h", description: "Show usage information" },
     { name: "version", alias: "V", description: "Show version information" },
     { name: "verbose", alias: "v", description: "Verbose output" },
@@ -317,19 +342,33 @@ const flagLength = (flag) => {
     const length = nameLength + dashLength;
     return length;
 };
+const INDENT = " ".repeat(6);
 const longestCommandName = Math.max(...(commands.map(command => command.name.length)));
 const longestFlagName = Math.max(...(flags.map(flag => flagLength(flag))));
 const longestFlagAlias = Math.max(...(flags.map(flag => { var _a, _b; return (_b = (_a = flag === null || flag === void 0 ? void 0 : flag.alias) === null || _a === void 0 ? void 0 : _a.length) !== null && _b !== void 0 ? _b : 0; })));
-const INDENT = " ".repeat(6);
-const commandHelp = commands.map(({ name, description }) => {
-    return INDENT + name.padEnd(longestCommandName + 2, " ") + description;
-}).join("\n");
-const flagHelp = flags.map((flag) => {
+const formatCommandHelp = ({ name, description }) => {
+    const result = [
+        INDENT,
+        name.padEnd(longestCommandName + 2, " "),
+        description,
+    ].join("");
+    return result;
+};
+const formatFlagHelp = (flag) => {
     var _a;
     const nameText = `--${flag.name}`;
-    const aliasText = ((_a = flag === null || flag === void 0 ? void 0 : flag.alias) === null || _a === void 0 ? void 0 : _a.length) ? `-${flag.alias} ` : " ".repeat(longestFlagAlias + 2);
-    return INDENT + (aliasText + nameText).padEnd(longestFlagName + 2, " ") + flag.description;
-}).join("\n");
+    const aliasText = ((_a = flag === null || flag === void 0 ? void 0 : flag.alias) === null || _a === void 0 ? void 0 : _a.length)
+        ? `-${flag.alias} `
+        : " ".repeat(longestFlagAlias + 2);
+    const result = [
+        INDENT,
+        (aliasText + nameText).padEnd(longestFlagName + 2, " "),
+        flag.description,
+    ].join("");
+    return result;
+};
+const commandHelp = commands.map((command) => formatCommandHelp(command)).join("\n");
+const flagHelp = flags.map((flag) => formatFlagHelp(flag)).join("\n");
 const HELP = `
     Usage
       $ cf-images <command>
@@ -345,11 +384,12 @@ ${flagHelp}
 `;
 
 const COMMANDS = {
+    "delete-image": deleteImage,
     "init": init,
     "list-images": listImages,
     "list-variants": listVariants,
     "upload-image": uploadImage,
-    "delete-image": deleteImage,
+    "upload-images": uploadImages,
 };
 class Program {
     constructor(args, flags) {
@@ -358,6 +398,7 @@ class Program {
     }
     main() {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log("noice");
             try {
                 const commandArg = this.args[0];
                 const command = COMMANDS[commandArg];
@@ -381,7 +422,7 @@ class Program {
     }
 }
 
-var version = "1.1.0";
+var version = "1.2.0";
 
 const versionNumber = version;
 const VERSION = `cf-images version ${versionNumber}`;
@@ -390,21 +431,11 @@ const cli = () => __awaiter(void 0, void 0, void 0, function* () {
     const _cli = meow(HELP, {
         importMeta: import.meta,
         flags: {
-            debug: {
-                alias: "d",
-                type: "boolean",
-                default: false,
-            },
-            verbose: {
-                alias: "v",
-                type: "boolean",
-                default: false,
-            },
-            version: {
-                alias: "V",
-                type: "boolean",
-                default: false,
-            },
+            path: { alias: "p", type: "string", default: "" },
+            config: { alias: "c", type: "string", default: "" },
+            debug: { alias: "d", type: "boolean", default: false },
+            verbose: { alias: "v", type: "boolean", default: false },
+            version: { alias: "V", type: "boolean", default: false },
         },
         version: VERSION,
     });
@@ -420,6 +451,9 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         process.exit(0);
     })
         .catch((error) => {
+        if (error) {
+            console.error(error);
+        }
         process.exit(1);
     });
 }))();

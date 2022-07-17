@@ -12,7 +12,7 @@ const main = async (): Promise<any> => {
             process.exit(0)
         })
         .catch((error) => {
-            // if (error) { console.error(error) }
+            if (error) { console.error(error) }
             process.exit(1)
         })
 })()

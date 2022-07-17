@@ -27,6 +27,7 @@ const config = {
         "inquirer",
         "cloudflare-images",
         "meow",
+        "pathname-ts",
     ],
     plugins: [
         json(),
