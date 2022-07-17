@@ -297,13 +297,15 @@ const uploadImage = (_flags) => __awaiter(void 0, void 0, void 0, function* () {
 
 const uploadImages = (flags) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        if (isBlank(flags === null || flags === void 0 ? void 0 : flags.configPath)) {
+        if (isBlank(flags === null || flags === void 0 ? void 0 : flags.config)) {
             console.log("config file required");
             process.exit(1);
         }
+        console.log(flags.config);
+        process.exit(0);
         try {
-            const configPath = new Pathname(flags.configPath);
-            const config = configPath.readJSON();
+            const configPath = new Pathname(flags.config);
+            const config = yield configPath.readJSON();
             logJson(config);
         }
         catch (error) {
@@ -317,8 +319,8 @@ const uploadImages = (flags) => __awaiter(void 0, void 0, void 0, function* () {
 });
 
 const FLAG_CONFIGS = [
-    { name: "configPath", alias: "p", type: "string", default: null, description: "Path to a file or folder" },
-    { name: "path", alias: "p", type: "string", default: null, description: "Path to a file or folder" },
+    { name: "config", alias: "c", type: "string", default: "", description: "Path to a command config file" },
+    { name: "path", alias: "p", type: "string", default: "", description: "Path to a file or folder" },
     { name: "help", alias: "h", type: "boolean", default: false, description: "Show usage information" },
     { name: "version", alias: "V", type: "boolean", default: false, description: "Show version information" },
     { name: "verbose", alias: "v", type: "boolean", default: false, description: "Verbose output" },
@@ -449,10 +451,13 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
 });
 (() => __awaiter(void 0, void 0, void 0, function* () {
     main()
-        .then((res) => {
+        .then((_res) => {
         process.exit(0);
     })
         .catch((error) => {
+        if (error) {
+            console.error(error);
+        }
         process.exit(1);
     });
 }))();
