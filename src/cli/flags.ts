@@ -6,7 +6,7 @@ export const FLAG_CONFIGS: FlagConfig[] = [
     { name: "help",    alias: "h", type: "boolean", default: false, description: "Show usage information"        },
     { name: "version", alias: "V", type: "boolean", default: false, description: "Show version information"      },
     { name: "verbose", alias: "v", type: "boolean", default: false, description: "Verbose output"                },
-    { name: "debug",   alias: "d", type: "boolean", default: false, description: "Verbose output"                },
+    { name: "dry",     alias: "d", type: "boolean", default: false, description: "Dry run"                       },
 ]
 
 export const FLAG_OPTIONS = FLAG_CONFIGS.reduce((result, flag) => {

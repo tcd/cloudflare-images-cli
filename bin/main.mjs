@@ -295,20 +295,67 @@ const uploadImage = (_flags) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 
+class UploadImagesCommand {
+    constructor(flags) {
+        this.flags = flags;
+    }
+    run() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const path = yield this.getPath();
+            const prefix = yield this.getPrefix();
+            const files = yield path.children("files");
+            const args = [];
+            for (const file of files) {
+                const fileName = file.basename(file.extname());
+                args.push({
+                    id: prefix + fileName,
+                    path: file.realpath,
+                });
+            }
+            logJson(args);
+            process.exit(0);
+        });
+    }
+    getPrefix() {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            const answers = yield inquire([{
+                    name: "prefix",
+                    type: "input",
+                    message: "Cloudflare Image Id Prefix: ",
+                }]);
+            return (_a = answers === null || answers === void 0 ? void 0 : answers.prefix) !== null && _a !== void 0 ? _a : "";
+        });
+    }
+    getPath() {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!isBlank((_a = this === null || this === void 0 ? void 0 : this.flags) === null || _a === void 0 ? void 0 : _a.path)) {
+                return new Pathname(this.flags.path);
+            }
+            const answers = yield inquire([{
+                    name: "path",
+                    type: "input",
+                    message: "Path to folder with files to upload",
+                }]);
+            if (isBlank(answers === null || answers === void 0 ? void 0 : answers.path)) {
+                console.log("a path is required for upload-images");
+                process.exit(1);
+            }
+            else {
+                return new Pathname(answers.path);
+            }
+        });
+    }
+}
 const uploadImages = (flags) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        if (isBlank(flags === null || flags === void 0 ? void 0 : flags.config)) {
-            console.log("config file required");
-            process.exit(1);
-        }
-        console.log(flags.config);
-        process.exit(0);
         try {
-            const configPath = new Pathname(flags.config);
-            const config = yield configPath.readJSON();
-            logJson(config);
+            const runner = new UploadImagesCommand(flags);
+            yield runner.run();
         }
         catch (error) {
+            console.error(error);
         }
         process.exit(0);
     }
@@ -324,7 +371,7 @@ const FLAG_CONFIGS = [
     { name: "help", alias: "h", type: "boolean", default: false, description: "Show usage information" },
     { name: "version", alias: "V", type: "boolean", default: false, description: "Show version information" },
     { name: "verbose", alias: "v", type: "boolean", default: false, description: "Verbose output" },
-    { name: "debug", alias: "d", type: "boolean", default: false, description: "Verbose output" },
+    { name: "dry", alias: "d", type: "boolean", default: false, description: "Dry run" },
 ];
 const FLAG_OPTIONS = FLAG_CONFIGS.reduce((result, flag) => {
     result[flag.name] = {
@@ -407,15 +454,35 @@ class Program {
         this.args = args;
         this.flags = flags;
     }
+    command() {
+        var _a, _b;
+        return (_b = (_a = this === null || this === void 0 ? void 0 : this.args) === null || _a === void 0 ? void 0 : _a[0]) !== null && _b !== void 0 ? _b : null;
+    }
+    logInput() {
+        var _a;
+        if ((_a = this === null || this === void 0 ? void 0 : this.flags) === null || _a === void 0 ? void 0 : _a.verbose) {
+            logJson({
+                command: this.command(),
+                flags: this.flags,
+            });
+        }
+    }
     main() {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const commandArg = this.args[0];
+                const commandArg = this.command();
                 const command = COMMANDS[commandArg];
-                if (command == null || command == undefined) {
-                    console.log(HELP);
+                if (command == null) {
+                    if ((_a = this === null || this === void 0 ? void 0 : this.flags) === null || _a === void 0 ? void 0 : _a.verbose) {
+                        this.logInput();
+                    }
+                    else {
+                        console.log(HELP);
+                    }
                     process.exit(0);
                 }
+                this.logInput();
                 yield command(this.flags);
                 process.exit(0);
             }
