@@ -31,9 +31,25 @@ declare module "cloudflare-images-cli" {
         version?: boolean
     }
 
+    export type CaseTransformation =
+        | "camel-case"
+        | "capital-case"
+        | "constant-case"
+        | "dot-case"
+        | "header-case"
+        | "no-case"
+        | "param-case"
+        | "pascal-case"
+        | "path-case"
+        | "sentence-case"
+        | "snake-case"
+
     export interface NameTransformationOptions {
         inputPattern: RegExp | string
         outputPattern: string
+        inputFolder?: string
+        removeFileExtension?: boolean
+        caseTransformation?: CaseTransformation
     }
 
     export type CLICommand = (flags: CLIFlags) => Promise<void>
