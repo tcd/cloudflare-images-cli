@@ -31,6 +31,7 @@
     "dependencies": {
         "chalk": "^5.0.1",
         "change-case": "^4.1.2",
+        "cli-progress": "^3.11.2",
         "cloudflare-images": "^0.5.0",
         "inquirer": "^9.0.0",
         "inquirer-fuzzy-path": "github:tcd/inquirer-fuzzy-path#tcd",
@@ -42,6 +43,7 @@
         "@rollup/plugin-json": "^4.1.0",
         "@rollup/plugin-node-resolve": "^13.3.0",
         "@rollup/plugin-typescript": "^8.3.3",
+        "@types/cli-progress": "^3.11.0",
         "@types/inquirer": "^8.2.1",
         "@types/node": "^18.0.3",
         "@typescript-eslint/eslint-plugin": "^5.30.5",

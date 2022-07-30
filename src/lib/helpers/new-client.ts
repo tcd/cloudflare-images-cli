@@ -1,5 +1,5 @@
 import { CloudflareClient } from "cloudflare-images"
-import { Config } from "./Config"
+import { Config } from "./classes"
 
 export const newClient = async (): Promise<CloudflareClient> => {
     const config = await Config.read()

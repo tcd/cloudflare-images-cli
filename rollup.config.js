@@ -24,8 +24,9 @@ const config = {
         // },
     ],
     external: [
-        "inquirer",
+        "cli-progress",
         "cloudflare-images",
+        "inquirer",
         "meow",
         "pathname-ts",
     ],

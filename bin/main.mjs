@@ -1,14 +1,15 @@
 #! /usr/bin/env node
 import meow from 'meow';
 import { join } from 'path';
+import { access, readFile, mkdir, writeFile } from 'fs/promises';
 import { homedir } from 'os';
-import { readFile, mkdir, writeFile, access } from 'fs/promises';
 import { constants } from 'fs';
 import inquirer from 'inquirer';
 import { CloudflareClient } from 'cloudflare-images';
 import 'readline';
 import 'util';
 import 'process';
+import cliProgress from 'cli-progress';
 import { Pathname } from 'pathname-ts';
 
 /******************************************************************************
@@ -36,10 +37,18 @@ function __awaiter(thisArg, _arguments, P, generator) {
     });
 }
 
-const exists = (path) => __awaiter(void 0, void 0, void 0, function* () {
+class Base {
+    static configFolderPath() {
+        return join(homedir(), this.CONFIG_FOLDER_NAME);
+    }
+}
+Base.CONFIG_FOLDER_NAME = ".cf-images";
+
+const existsAsync = (path) => __awaiter(void 0, void 0, void 0, function* () {
     return access(path, constants.F_OK).then(() => true).catch(() => false);
 });
-class Config {
+
+class Config extends Base {
     static get(property) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
@@ -100,16 +109,13 @@ class Config {
             }
         });
     }
-    static configFolderPath() {
-        return join(homedir(), this.CONFIG_FOLDER_NAME);
-    }
     static configFilePath() {
         return join(this.configFolderPath(), this.CONFIG_FILE_NAME);
     }
     static configExists() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const result = yield exists(this.configFilePath());
+                const result = yield existsAsync(this.configFilePath());
                 return result;
             }
             catch (error) {
@@ -119,8 +125,63 @@ class Config {
         });
     }
 }
-Config.CONFIG_FOLDER_NAME = ".cf-images";
 Config.CONFIG_FILE_NAME = "cf-images.config.json";
+Config.DB_FILE_NAME = "cf-images.db.json";
+
+class DB extends Base {
+    static read() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const doesExist = yield this.exists();
+                if (!doesExist) {
+                    console.log("please configure db by running 'TODO'");
+                    process.exit(1);
+                }
+                const fileContent = yield readFile(this.dbFilePath());
+                const fileContentString = fileContent.toString();
+                const result = JSON.parse(fileContentString);
+                return result;
+            }
+            catch (error) {
+                console.error(error);
+                process.exit(1);
+            }
+        });
+    }
+    static write(data, verbose = false) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const content = JSON.stringify(data);
+                yield mkdir(this.configFolderPath(), { recursive: true });
+                yield writeFile(this.dbFilePath(), content);
+                if (verbose) {
+                    console.log(`cloudflare images database updated: '${this.dbFilePath()}'`);
+                }
+                return true;
+            }
+            catch (error) {
+                console.error(error);
+                process.exit(1);
+            }
+        });
+    }
+    static dbFilePath() {
+        return join(this.configFolderPath(), this.DB_FILE_NAME);
+    }
+    static exists() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const result = yield existsAsync(this.dbFilePath());
+                return result;
+            }
+            catch (error) {
+                console.error(error);
+                process.exit(1);
+            }
+        });
+    }
+}
+DB.DB_FILE_NAME = "cf-images.db.json";
 
 const inquire = (questions) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -170,6 +231,84 @@ const newClient = () => __awaiter(void 0, void 0, void 0, function* () {
     });
 });
 
+const FLAG_CONFIGS = [
+    { name: "config", alias: "c", type: "string", default: "", description: "Path to a command config file" },
+    { name: "path", alias: "p", type: "string", default: "", description: "Path to a file or folder" },
+    { name: "help", alias: "h", type: "boolean", default: false, description: "Show usage information" },
+    { name: "version", alias: "V", type: "boolean", default: false, description: "Show version information" },
+    { name: "verbose", alias: "v", type: "boolean", default: false, description: "Verbose output" },
+    { name: "dry", alias: "d", type: "boolean", default: false, description: "Dry run" },
+];
+const FLAG_OPTIONS = FLAG_CONFIGS.reduce((result, flag) => {
+    result[flag.name] = {
+        alias: flag.alias,
+        type: flag.type,
+        default: flag.default,
+    };
+    return result;
+}, {});
+
+const commands = [
+    { name: "init", description: "Configure Cloudflare credentials" },
+    { name: "list-images", description: "List images" },
+    { name: "list-variants", description: "List variants" },
+    { name: "upload-image", description: "Upload a local image file to Cloudflare" },
+    { name: "delete-image", description: "Delete an image on Cloudflare Images" },
+    { name: "get-stats", description: "Get usage statistics for Cloudflare Images" },
+    { name: "update-db", description: "Create a local list of all Cloudflare Images" },
+];
+const flagLength = (flag) => {
+    var _a;
+    let dashLength = 2;
+    let nameLength = flag.name.length;
+    if ((_a = flag === null || flag === void 0 ? void 0 : flag.alias) === null || _a === void 0 ? void 0 : _a.length) {
+        dashLength += 2;
+        nameLength += flag.alias.length;
+    }
+    const length = nameLength + dashLength;
+    return length;
+};
+const INDENT = " ".repeat(6);
+const longestCommandName = Math.max(...(commands.map(command => command.name.length)));
+const longestFlagName = Math.max(...(FLAG_CONFIGS.map(flag => flagLength(flag))));
+const longestFlagAlias = Math.max(...(FLAG_CONFIGS.map(flag => { var _a, _b; return (_b = (_a = flag === null || flag === void 0 ? void 0 : flag.alias) === null || _a === void 0 ? void 0 : _a.length) !== null && _b !== void 0 ? _b : 0; })));
+const formatCommandHelp = ({ name, description }) => {
+    const result = [
+        INDENT,
+        name.padEnd(longestCommandName + 2, " "),
+        description,
+    ].join("");
+    return result;
+};
+const formatFlagHelp = (flag) => {
+    var _a;
+    const nameText = `--${flag.name}`;
+    const aliasText = ((_a = flag === null || flag === void 0 ? void 0 : flag.alias) === null || _a === void 0 ? void 0 : _a.length)
+        ? `-${flag.alias} `
+        : " ".repeat(longestFlagAlias + 2);
+    const result = [
+        INDENT,
+        (aliasText + nameText).padEnd(longestFlagName + 2, " "),
+        flag.description,
+    ].join("");
+    return result;
+};
+const commandHelp = commands.map((command) => formatCommandHelp(command)).join("\n");
+const flagHelp = FLAG_CONFIGS.map((flag) => formatFlagHelp(flag)).join("\n");
+const HELP = `
+    Usage
+      $ cf-images <command>
+
+    Commands
+${commandHelp}
+
+    Options
+${flagHelp}
+
+    Examples
+      $ cf-images list-images >> cloudflare-images.json
+`;
+
 const questions$2 = [
     {
         name: "id",
@@ -183,6 +322,24 @@ const deleteImage = (_) => __awaiter(void 0, void 0, void 0, function* () {
         const client = yield newClient();
         const response = yield client.deleteImage(answers.id);
         logJson(response.result);
+        process.exit(0);
+    }
+    catch (error) {
+        console.error(error);
+        process.exit(1);
+    }
+});
+
+const getStats = (flags) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const client = yield newClient();
+        const response = yield client.getStats();
+        if (flags === null || flags === void 0 ? void 0 : flags.verbose) {
+            logJson(response);
+        }
+        else {
+            logJson(response.result);
+        }
         process.exit(0);
     }
     catch (error) {
@@ -256,6 +413,40 @@ const listVariants = (flags) => __awaiter(void 0, void 0, void 0, function* () {
     catch (error) {
         console.error(error);
         process.exit(1);
+    }
+});
+
+const updateDb = (_flags) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
+    const progressBar = new cliProgress.SingleBar({}, cliProgress.Presets.rect);
+    try {
+        const PER_PAGE = 100;
+        const client = yield newClient();
+        const statsResponse = yield client.getStats();
+        const totalImages = (_b = (_a = statsResponse === null || statsResponse === void 0 ? void 0 : statsResponse.result) === null || _a === void 0 ? void 0 : _a.count) === null || _b === void 0 ? void 0 : _b.current;
+        const requestsRequired = Math.ceil(totalImages / PER_PAGE);
+        const responses = [];
+        progressBar.start(requestsRequired, 0);
+        for (let i = 1; i <= requestsRequired; i++) {
+            const response = yield client.listImages({ page: i, per_page: PER_PAGE });
+            responses.push(...response.result.images);
+            progressBar.update(i);
+        }
+        progressBar.stop();
+        const data = {
+            updatedAt: new Date(Date.now()).toISOString(),
+            images: responses,
+        };
+        yield DB.write(data, true);
+        process.exit(0);
+    }
+    catch (error) {
+        progressBar === null || progressBar === void 0 ? void 0 : progressBar.stop();
+        console.error(error);
+        process.exit(1);
+    }
+    finally {
+        progressBar === null || progressBar === void 0 ? void 0 : progressBar.stop();
     }
 });
 
@@ -365,82 +556,6 @@ const uploadImages = (flags) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 
-const FLAG_CONFIGS = [
-    { name: "config", alias: "c", type: "string", default: "", description: "Path to a command config file" },
-    { name: "path", alias: "p", type: "string", default: "", description: "Path to a file or folder" },
-    { name: "help", alias: "h", type: "boolean", default: false, description: "Show usage information" },
-    { name: "version", alias: "V", type: "boolean", default: false, description: "Show version information" },
-    { name: "verbose", alias: "v", type: "boolean", default: false, description: "Verbose output" },
-    { name: "dry", alias: "d", type: "boolean", default: false, description: "Dry run" },
-];
-const FLAG_OPTIONS = FLAG_CONFIGS.reduce((result, flag) => {
-    result[flag.name] = {
-        alias: flag.alias,
-        type: flag.type,
-        default: flag.default,
-    };
-    return result;
-}, {});
-
-const commands = [
-    { name: "init", description: "Configure Cloudflare credentials" },
-    { name: "list-images", description: "List images" },
-    { name: "list-variants", description: "List variants" },
-    { name: "upload-image", description: "Upload a local image file to Cloudflare" },
-    { name: "delete-image", description: "Delete an image on Cloudflare Images" },
-];
-const flagLength = (flag) => {
-    var _a;
-    let dashLength = 2;
-    let nameLength = flag.name.length;
-    if ((_a = flag === null || flag === void 0 ? void 0 : flag.alias) === null || _a === void 0 ? void 0 : _a.length) {
-        dashLength += 2;
-        nameLength += flag.alias.length;
-    }
-    const length = nameLength + dashLength;
-    return length;
-};
-const INDENT = " ".repeat(6);
-const longestCommandName = Math.max(...(commands.map(command => command.name.length)));
-const longestFlagName = Math.max(...(FLAG_CONFIGS.map(flag => flagLength(flag))));
-const longestFlagAlias = Math.max(...(FLAG_CONFIGS.map(flag => { var _a, _b; return (_b = (_a = flag === null || flag === void 0 ? void 0 : flag.alias) === null || _a === void 0 ? void 0 : _a.length) !== null && _b !== void 0 ? _b : 0; })));
-const formatCommandHelp = ({ name, description }) => {
-    const result = [
-        INDENT,
-        name.padEnd(longestCommandName + 2, " "),
-        description,
-    ].join("");
-    return result;
-};
-const formatFlagHelp = (flag) => {
-    var _a;
-    const nameText = `--${flag.name}`;
-    const aliasText = ((_a = flag === null || flag === void 0 ? void 0 : flag.alias) === null || _a === void 0 ? void 0 : _a.length)
-        ? `-${flag.alias} `
-        : " ".repeat(longestFlagAlias + 2);
-    const result = [
-        INDENT,
-        (aliasText + nameText).padEnd(longestFlagName + 2, " "),
-        flag.description,
-    ].join("");
-    return result;
-};
-const commandHelp = commands.map((command) => formatCommandHelp(command)).join("\n");
-const flagHelp = FLAG_CONFIGS.map((flag) => formatFlagHelp(flag)).join("\n");
-const HELP = `
-    Usage
-      $ cf-images <command>
-
-    Commands
-${commandHelp}
-
-    Options
-${flagHelp}
-
-    Examples
-      $ cf-images list-images >> cloudflare-images.json
-`;
-
 const COMMANDS = {
     "delete-image": deleteImage,
     "init": init,
@@ -448,6 +563,8 @@ const COMMANDS = {
     "list-variants": listVariants,
     "upload-image": uploadImage,
     "upload-images": uploadImages,
+    "get-stats": getStats,
+    "update-db": updateDb,
 };
 class Program {
     constructor(args, flags) {

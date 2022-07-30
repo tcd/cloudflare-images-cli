@@ -1,4 +1,5 @@
-import { Config, IConfig } from "@lib/helpers"
+import { IConfig } from "cloudflare-images-cli"
+import { Config } from "@lib/helpers"
 
 export const scratch2 = async () => {
     const newConfig: IConfig = {
