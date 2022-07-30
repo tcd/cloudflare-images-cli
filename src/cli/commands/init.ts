@@ -1,7 +1,7 @@
 import { QuestionCollection } from "inquirer"
 
-import { CLICommand } from "cloudflare-images-cli"
-import { Config, IConfig, inquire, isBlank } from "@lib/helpers"
+import { CLICommand, IConfig } from "cloudflare-images-cli"
+import { Config, inquire, isBlank } from "@lib/helpers"
 
 const questions: QuestionCollection = [
     {

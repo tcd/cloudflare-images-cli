@@ -1,18 +1,14 @@
 import { join } from "path"
-import { homedir } from "os"
 import { mkdir, readFile, writeFile } from "fs/promises"
-import { existsAsync } from "./exists-async"
 
-export interface IConfig {
-    apiKey?: string
-    accountId?: string
-}
-export type IConfigProperty = keyof IConfig
+import { IConfig, IConfigProperty } from "cloudflare-images-cli"
+import { Base } from "./Base"
+import { existsAsync } from "../exists-async"
 
-export abstract class Config {
+export abstract class Config extends Base {
 
-    public static CONFIG_FOLDER_NAME = ".cf-images"
     public static CONFIG_FILE_NAME = "cf-images.config.json"
+    public static DB_FILE_NAME = "cf-images.db.json"
 
     public static async get(property: IConfigProperty): Promise<string> {
         try {
@@ -64,10 +60,6 @@ export abstract class Config {
             console.error(error)
             process.exit(1)
         }
-    }
-
-    private static configFolderPath(): string {
-        return join(homedir(), this.CONFIG_FOLDER_NAME)
     }
 
     private static configFilePath(): string {

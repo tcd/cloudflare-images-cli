@@ -7,6 +7,7 @@ import {
     init,
     listImages,
     listVariants,
+    updateDb,
     uploadImage,
     uploadImages,
 } from "./commands"
@@ -19,6 +20,7 @@ const COMMANDS: Record<string, CLICommand> = {
     "upload-image":  uploadImage,
     "upload-images": uploadImages,
     "get-stats":     getStats,
+    "update-db":     updateDb,
 }
 
 export class Program {

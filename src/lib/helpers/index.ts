@@ -1,4 +1,4 @@
-export * from "./Config"
+export * from "./classes"
 export * from "./inquire"
 export * from "./is-blank"
 export * from "./log-json"

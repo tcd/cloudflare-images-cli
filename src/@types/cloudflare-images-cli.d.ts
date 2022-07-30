@@ -54,4 +54,16 @@ declare module "cloudflare-images-cli" {
 
     export type CLICommand = (flags: CLIFlags) => Promise<void>
 
+    export interface IConfig {
+        apiKey?: string
+        accountId?: string
+    }
+    export type IConfigProperty = keyof IConfig
+
+
+    export interface DatabaseData {
+        updatedAt: string
+        images: any[]
+    }
+
 }
