@@ -8,6 +8,7 @@ const commands: Command[] = [
     { name: "list-variants", description: "List variants" },
     { name: "upload-image",  description: "Upload a local image file to Cloudflare" },
     { name: "delete-image",  description: "Delete an image on Cloudflare Images" },
+    { name: "get-stats",     description: "Get usage statistics for Cloudflare Images" },
 ]
 
 const flagLength = (flag: FlagConfig): number => {

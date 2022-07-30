@@ -1,4 +1,5 @@
 export * from "./delete-image"
+export * from "./get-stats"
 export * from "./init"
 export * from "./list-images"
 export * from "./list-variants"

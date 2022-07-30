@@ -1,7 +1,15 @@
 import { CLIFlags, CLICommand } from "cloudflare-images-cli"
-import { deleteImage, init, listImages, listVariants, uploadImage, uploadImages } from "./commands"
+import { logJson } from "@lib/helpers"
 import { HELP } from "./help"
-import { newClient, logJson, inquire } from "@lib/helpers"
+import {
+    deleteImage,
+    getStats,
+    init,
+    listImages,
+    listVariants,
+    uploadImage,
+    uploadImages,
+} from "./commands"
 
 const COMMANDS: Record<string, CLICommand> = {
     "delete-image":  deleteImage,
@@ -10,6 +18,7 @@ const COMMANDS: Record<string, CLICommand> = {
     "list-variants": listVariants,
     "upload-image":  uploadImage,
     "upload-images": uploadImages,
+    "get-stats":     getStats,
 }
 
 export class Program {
