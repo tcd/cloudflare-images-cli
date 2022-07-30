@@ -1,16 +1,7 @@
 import { join } from "path"
 import { homedir } from "os"
-import { access, mkdir, readFile, writeFile } from "fs/promises"
-import { constants as fsConstants } from "fs"
-
-const exists = async (path: string): Promise<boolean> => {
-    // return new Promise((resolve, reject) => {
-    //     setTimeout(() => {
-    //         const result = existsSync(path)
-    //     }, 100)
-    // })
-    return access(path, fsConstants.F_OK).then(() => true).catch(() => false)
-}
+import { mkdir, readFile, writeFile } from "fs/promises"
+import { existsAsync } from "./exists-async"
 
 export interface IConfig {
     apiKey?: string
@@ -85,7 +76,7 @@ export abstract class Config {
 
     private static async configExists(): Promise<boolean> {
         try {
-            const result = await exists(this.configFilePath())
+            const result = await existsAsync(this.configFilePath())
             return result
         } catch (error) {
             console.error(error)
